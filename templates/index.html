@@ -1,1 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heart Disease Prediction | AI Health</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4bb543;
+            --warning-color: #f0ad4e;
+            --danger-color: #d9534f;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem 2rem;
+            text-align: center;
+        }
+        
+        .card-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .card-body {
+            padding: 2rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn i {
+            margin-right: 10px;
+        }
+        
+        .info-text {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .info-icon {
+            color: var(--primary-color);
+            margin-left: 5px;
+            cursor: pointer;
+        }
+        
+        /* Heart icon */
+        .heart-icon {
+            color: #ff4757;
+            margin-right: 10px;
+            font-size: 1.5em;
+            vertical-align: middle;
+        }
+        
+        /* Tooltip styles */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark-color);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+            font-weight: normal;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Decorative elements */
+        .circle {
+            position: fixed;
+            border-radius: 50%;
+            background: rgba(76, 201, 240, 0.1);
+            z-index: -1;
+        }
+        
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            right: -100px;
+        }
+        
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -50px;
+            left: -50px;
+        }
+        
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1.5rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card-header h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h1><i class="fas fa-heart heart-icon"></i> Heart Disease Prediction</h1>
+                <p>Fill the form below to assess your heart health</p>
+            </div>
+            <div class="card-body">
+                <form action="/predict" method="post">
+                    <div class="form-grid">
+                        <!-- Personal Information -->
+                        <div class="form-group">
+                            <label for="age">Age</label>
+                            <input type="number" class="form-control" id="age" name="age" min="20" max="100" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sex">Sex</label>
+                            <select class="form-select" id="sex" name="sex" required>
+                                <option value="" selected disabled>Select gender</option>
+                                <option value="0">Female</option>
+                                <option value="1">Male</option>
+                            </select>
+                        </div>
 
+                        <!-- Medical Information -->
+                        <div class="form-group">
+                            <label for="cp">
+                                Chest Pain Type 
+                                <span class="tooltip"><i class="fas fa-info-circle info-icon"></i>
+                                    <span class="tooltip-text">0: Typical angina, 1: Atypical angina, 2: Non-anginal pain, 3: Asymptomatic</span>
+                                </span>
+                            </label>
+                            <select class="form-select" id="cp" name="cp" required>
+                                <option value="" selected disabled>Select type</option>
+                                <option value="0">0 - Typical angina</option>
+                                <option value="1">1 - Atypical angina</option>
+                                <option value="2">2 - Non-anginal pain</option>
+                                <option value="3">3 - Asymptomatic</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="trestbps">Resting Blood Pressure (mmHg)</label>
+                            <input type="number" class="form-control" id="trestbps" name="trestbps" min="90" max="200" placeholder="90 - 200 mmHg" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="chol">Cholesterol (mg/dL)</label>
+                            <input type="number" class="form-control" id="chol" name="chol" min="120" max="600" placeholder="120 - 600 mg/dL" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fbs">Fasting Blood Sugar > 120 mg/dL</label>
+                            <select class="form-select" id="fbs" name="fbs" required>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="restecg">
+                                Resting ECG 
+                                <span class="tooltip"><i class="fas fa-info-circle info-icon"></i>
+                                    <span class="tooltip-text">0: Normal, 1: ST-T wave abnormality, 2: Left ventricular hypertrophy</span>
+                                </span>
+                            </label>
+                            <select class="form-select" id="restecg" name="restecg" required>
+                                <option value="0">0 - Normal</option>
+                                <option value="1">1 - ST-T wave abnormality</option>
+                                <option value="2">2 - Left ventricular hypertrophy</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="thalach">Max Heart Rate (bpm)</label>
+                            <input type="number" class="form-control" id="thalach" name="thalach" min="70" max="220" placeholder="70 - 220 bpm" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="exang">Exercise-Induced Angina</label>
+                            <select class="form-select" id="exang" name="exang" required>
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="oldpeak">ST Depression (Oldpeak)</label>
+                            <input type="number" class="form-control" id="oldpeak" name="oldpeak" min="0" max="6.2" step="0.1" placeholder="0 - 6.2" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="slope">
+                                ST Slope 
+                                <span class="tooltip"><i class="fas fa-info-circle info-icon"></i>
+                                    <span class="tooltip-text">0: Upsloping, 1: Flat, 2: Downsloping</span>
+                                </span>
+                            </label>
+                            <select class="form-select" id="slope" name="slope" required>
+                                <option value="0">0 - Upsloping</option>
+                                <option value="1">1 - Flat</option>
+                                <option value="2">2 - Downsloping</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ca">Major Vessels (0-3)</label>
+                            <select class="form-select" id="ca" name="ca" required>
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="thal">
+                                Thalassemia 
+                                <span class="tooltip"><i class="fas fa-info-circle info-icon"></i>
+                                    <span class="tooltip-text">3: Normal, 6: Fixed defect, 7: Reversible defect</span>
+                                </span>
+                            </label>
+                            <select class="form-select" id="thal" name="thal" required>
+                                <option value="3">3 - Normal</option>
+                                <option value="6">6 - Fixed defect</option>
+                                <option value="7">7 - Reversible defect</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn">
+                            <i class="fas fa-heartbeat"></i> Predict Heart Disease
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <p class="info-text">
+            <i class="fas fa-info-circle"></i> This prediction is for informational purposes only. Consult a doctor for medical advice.
+        </p>
+    </div>
+
+    <script>
+        // Form validation and interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            
+            if(form) {
+                form.addEventListener('submit', function(e) {
+                    // Validate all required fields are filled
+                    const requiredFields = form.querySelectorAll('[required]');
+                    let isValid = true;
+                    
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            field.style.borderColor = 'var(--danger-color)';
+                            setTimeout(() => {
+                                field.style.borderColor = '#e9ecef';
+                            }, 2000);
+                            isValid = false;
+                        }
+                    });
+                    
+                    if (!isValid) {
+                        e.preventDefault();
+                        alert('Please fill all required fields');
+                    }
+                });
+            }
+            
+            // Add focus effects to form elements
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.style.borderColor = 'var(--primary-color)';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.style.borderColor = '#e9ecef';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
